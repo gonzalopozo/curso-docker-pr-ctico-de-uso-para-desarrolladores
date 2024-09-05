@@ -16,7 +16,7 @@ exports.HelloWorldResolver = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let HelloWorldResolver = class HelloWorldResolver {
     helloWorld() {
-        return 'Hola Mundo - desde mi equipo';
+        return 'Hola Mundo - desde mi contenedor';
     }
     getRandomNumber() {
         return Math.random() * 100;
