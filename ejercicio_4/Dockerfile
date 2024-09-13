@@ -7,3 +7,8 @@ WORKDIR /app
 
 COPY app.js package.json ./
 
+# Instalar las dependencias
+RUN npm install
+
+# Comando run de la imagen
+CMD [ "node", "app.js" ]
