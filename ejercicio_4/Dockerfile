@@ -9,7 +9,10 @@ COPY package.json ./
 # Instalar las dependencias
 RUN npm install
 
-COPY app.js ./
+COPY . .
+
+# Realizar testing
+RUN npm run test
 
 # Comando run de la imagen
 CMD [ "node", "app.js" ]
