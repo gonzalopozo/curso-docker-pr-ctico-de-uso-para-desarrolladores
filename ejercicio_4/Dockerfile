@@ -1,26 +1,29 @@
-# FROM --platform=linux/arm64 node:19.2-alpine3.16
-# FROM --platform=$BUILDPLATFORM node:19.2-alpine3.16
-FROM node:19.2-alpine3.16
-# imagenes de alpine, vienen con directorios como /app /usr /lib por defecto
-
-# cd app
+# Dependencias de desarrollo
+FROM node:19.2-alpine3.16 AS deps
 WORKDIR /app 
-
 COPY package.json ./
-
-# Instalar las dependencias
 RUN npm install
 
-COPY . .
 
-# Realizar testing
+# Test y build
+FROM node:19.2-alpine3.16 AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 RUN npm run test
 
-# Eliminar archivos y directorios no necesarios en producción
-RUN rm -rf test && rm -rf node_modules
 
-# Unicamente instalamos las dependencias de producción
+# Dependencias de producción
+FROM node:19.2-alpine3.16 AS prod-deps
+WORKDIR /app
+COPY package.json ./
 RUN npm install --prod
 
-# Comando run de la imagen
+
+# Ejecutar la app
+FROM node:19.2-alpine3.16 AS runner
+WORKDIR /app
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY app.js ./
+COPY tasks/ ./tasks
 CMD [ "node", "app.js" ]
